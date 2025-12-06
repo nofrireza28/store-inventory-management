@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistem Manajemen Inventori Toko</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Sistem Manajemen Inventori Toko</h1>
+      </div>
+    </header>
+
+    <nav>
+      <div class="container">
+        <button class="nav-btn active" data-section="dashboard">
+          Dashboard
+        </button>
+        <button class="nav-btn" data-section="products">Produk</button>
+        <button class="nav-btn" data-section="transactions">Transaksi</button>
+      </div>
+    </nav>
+
+    <main>
+      <!-- Alert Messages (Toast style) -->
+      <div id="alertBox" class="alert"></div>
+
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="active">
+        <h2>Dashboard</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Produk</h3>
+            <div class="value" id="totalProducts">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Total Transaksi</h3>
+            <div class="value" id="totalTransactions">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Total Pendapatan</h3>
+            <div class="value" id="totalRevenue">Rp 0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Rata-rata Transaksi</h3>
+            <div class="value" id="avgTransaction">Rp 0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Products Section -->
+      <section id="products">
+        <h2>
+          Manajemen Produk
+          <button class="btn btn-primary btn-small" id="openProductModalBtn">
+            + Tambah Produk
+          </button>
+        </h2>
+
+        <div class="controls-row">
+          <div class="search-bar">
+            <input
+              type="text"
+              id="searchProduct"
+              placeholder="Cari berdasarkan nama atau kategori..."
+            />
+          </div>
+        </div>
+
+        <table id="productTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Produk</th>
+              <th>Kategori</th>
+              <th>Harga</th>
+              <th>Stok</th>
+              <th>Status</th>
+              <th>Fitur</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="productTableBody">
+            <!-- Data will be inserted here -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Product Modal -->
+      <div id="productModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="productModalTitle">Tambah Produk Baru</h3>
+            <span class="close-modal">&times;</span>
+          </div>
+          <div class="modal-body">
+            <form id="productForm">
+              <div class="form-group">
+                <label for="productName">Nama Produk *</label>
+                <input
+                  type="text"
+                  id="productName"
+                  required
+                  placeholder="Contoh: Kopi Bubuk"
+                />
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="productCategory">Kategori *</label>
+                  <select id="productCategory" required>
+                    <option value="">Pilih Kategori</option>
+                    <option value="Elektronik">Elektronik</option>
+                    <option value="Pakaian">Pakaian</option>
+                    <option value="Makanan">Makanan</option>
+                    <option value="Minuman">Minuman</option>
+                    <option value="Alat Tulis">Alat Tulis</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="productPrice">Harga (Rp) *</label>
+                  <input
+                    type="number"
+                    id="productPrice"
+                    min="0"
+                    required
+                    placeholder="0"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="productStock">Stok *</label>
+                  <input
+                    type="number"
+                    id="productStock"
+                    min="0"
+                    required
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Status Produk *</label>
+                <div class="radio-group">
+                  <label>
+                    <input
+                      type="radio"
+                      name="productStatus"
+                      value="Aktif"
+                      checked
+                    />
+                    Aktif
+                  </label>
+                  <label>
+                    <input type="radio" name="productStatus" value="Nonaktif" />
+                    Nonaktif
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Fitur Produk</label>
+                <div class="checkbox-group">
+                  <label>
+                    <input type="checkbox" name="features" value="Promo" />
+                    Promo
+                  </label>
+                  <label>
+                    <input type="checkbox" name="features" value="Terlaris" />
+                    Terlaris
+                  </label>
+                  <label>
+                    <input type="checkbox" name="features" value="Baru" />
+                    Baru
+                  </label>
+                </div>
+              </div>
+
+              <div
+                style="
+                  display: flex;
+                  justify-content: flex-end;
+                  gap: 10px;
+                  margin-top: 20px;
+                "
+              >
+                <button type="button" class="btn btn-outline closeModalBtn">
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="submitProductBtn"
+                >
+                  Simpan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions Section -->
+      <section id="transactions">
+        <h2>
+          Transaksi Penjualan
+          <button
+            class="btn btn-success btn-small"
+            id="openTransactionModalBtn"
+          >
+            + Transaksi Baru
+          </button>
+        </h2>
+
+        <div class="controls-row">
+          <div class="search-bar">
+            <input
+              type="text"
+              id="searchTransaction"
+              placeholder="Cari pelanggan atau produk..."
+            />
+          </div>
+        </div>
+
+        <table id="transactionTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Tanggal</th>
+              <th>Produk</th>
+              <th>Jumlah</th>
+              <th>Total</th>
+              <th>Pelanggan</th>
+              <th>Metode</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="transactionTableBody">
+            <!-- Data will be inserted here -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Transaction Modal -->
+      <div id="transactionModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Tambah Transaksi Baru</h3>
+            <span class="close-modal">&times;</span>
+          </div>
+          <div class="modal-body">
+            <form id="transactionForm">
+              <div class="form-group">
+                <label for="transactionProduct">Pilih Produk *</label>
+                <select id="transactionProduct" required>
+                  <option value="">Pilih Produk</option>
+                </select>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="transactionQuantity">Jumlah *</label>
+                  <input
+                    type="number"
+                    id="transactionQuantity"
+                    min="1"
+                    required
+                    placeholder="1"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="transactionTotal">Total Harga</label>
+                  <input
+                    type="text"
+                    id="transactionTotal"
+                    readonly
+                    style="background-color: #f3f4f6; font-weight: bold"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="customerName">Nama Pelanggan *</label>
+                <input
+                  type="text"
+                  id="customerName"
+                  required
+                  placeholder="Nama Pembeli"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="paymentMethod">Metode Pembayaran *</label>
+                <select id="paymentMethod" required>
+                  <option value="">Pilih Metode</option>
+                  <option value="Tunai">Tunai</option>
+                  <option value="Transfer">Transfer</option>
+                  <option value="E-Wallet">E-Wallet</option>
+                  <option value="Kartu Kredit">Kartu Kredit</option>
+                </select>
+              </div>
+
+              <div
+                style="
+                  display: flex;
+                  justify-content: flex-end;
+                  gap: 10px;
+                  margin-top: 20px;
+                "
+              >
+                <button type="button" class="btn btn-outline closeModalBtn">
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  id="submitTransactionBtn"
+                >
+                  Proses Transaksi
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>
+          &copy; 2024 Sistem Manajemen Inventori Toko | Project Pemrograman
+          Front-End
+        </p>
+      </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+  </body>
+</html>
